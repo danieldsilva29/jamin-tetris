@@ -61,7 +61,7 @@ class TetrisEnv:
                 if p in self.game.figure.image():
                     ob[i + self.game.figure.y][j + self.game.figure.x] = 0.5
 
-        return np.array(ob)
+        return np.array(ob).flatten()
     
     def reset (self):
         self.game = Tetris(self.h, self.w)
