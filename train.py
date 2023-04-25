@@ -7,18 +7,18 @@ import os
 # Hyperparams
 w = 10
 h = 20
-lr = 0.001
-mem_cap = 1_000_000
+lr = 0.0005
+mem_cap = 500_000
 frameReachProb = 1_000_000
-targetFreqUpdate = 5_000
-batches=16
+targetFreqUpdate = 1_000
+batches = 16
 modelPath = "./model.pth"
 savePerEpi = 100
 
 # Actual vars
 env = TetrisEnv(height=h, width=w)
 ob = env.reset()
-num_epi_trained = 10_000
+num_epi_trained = 1_000_000
 agent = Agent(
     h=h,
     w=w,
@@ -55,3 +55,6 @@ for i in range(num_epi_trained):
     # save model every few often
     if i % savePerEpi == 0:
         agent.save(modelPath)
+
+agent.save(modelPath)
+print("Model saved")
