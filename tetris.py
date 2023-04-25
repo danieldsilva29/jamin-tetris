@@ -169,7 +169,9 @@ if __name__ == "__main__":
             if game.state == "start":
                 game.go_down()
 
-        for event in list(pygame.event.get() + run_hamin(game.field, game.figure, game.width, game.height)):
+        for event in list(pygame.event.get() 
+                          + run_hamin(game.field, game.figure, game.width, game.height)
+                          ):
             if event.type == pygame.QUIT:
                 done = True
             if event.type == pygame.KEYDOWN:
