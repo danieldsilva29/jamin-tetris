@@ -7,10 +7,10 @@ import os
 # Hyperparams
 w = 10
 h = 20
-lr = 0.0005
+lr = 0.001
 mem_cap = 500_000
-frameReachProb = 1_000_000
-targetFreqUpdate = 1_000
+frameReachProb = 5_000_000
+targetFreqUpdate = 3_000
 batches = 16
 modelPath = "./model.pth"
 savePerEpi = 100

@@ -61,15 +61,13 @@ class Agent (nn.Module):
             nn.Softmax()
         )
         
-        self.is_testing = True
-        self.nn.load_state_dict(torch.load(modelPath))
 
-    def __init__(self, h, w, memCap, lr, frameReachProb, targetFreqUpdate, batches) -> None:
+    def __init__(self, h, w, memCap, lr, frameReachProb, targetFreqUpdate, batches, modelPath=None) -> None:
         super().__init__()
         
         # Actual NN decl
         self.nn = nn.Sequential(
-            nn.Linear(h*w, 128),
+            nn.Linear(h*w+16, 128),
             nn.Tanh(),
             nn.Linear(128, 64),
             nn.Tanh(),
@@ -78,26 +76,28 @@ class Agent (nn.Module):
         )
         # 6 total actions: rotate, rotate reverse, down, left, right, space
 
-        # target nn
-        self.target_nn = deepcopy(self.nn)
+        if modelPath != None:
+            self.nn = torch.load(modelPath)
+            self.is_testing = True        
+        else:
+            self.is_testing = False        
+            # target nn
+            self.target_nn = deepcopy(self.nn)
 
-        # params
-        self.replayMem = ReplayMem(memCap)   # replay memory for training / looking at past exp
-        self.frProb = frameReachProb         # exploration
-        self.tUpdate = targetFreqUpdate      # how much times we want to update the target policy
-        self.batches = batches               # the batches i.e the number of samples trained under one policy update
+            # params
+            self.replayMem = ReplayMem(memCap)   # replay memory for training / looking at past exp
+            self.frProb = frameReachProb         # exploration
+            self.tUpdate = targetFreqUpdate      # how much times we want to update the target policy
+            self.batches = batches               # the batches i.e the number of samples trained under one policy update
 
-        # Optimizer when training nn
-        self.opt = torch.optim.Adam(
-            self.nn.parameters(),
-            lr=lr
-        )
+            # Optimizer when training nn
+            self.opt = torch.optim.Adam(
+                self.nn.parameters(),
+                lr=lr
+            )
 
-        # loss func
-        self.mse = torch.nn.MSELoss()
-
-        # set is the testing
-        self.is_testing = False
+            # loss func
+            self.mse = torch.nn.MSELoss()
 
         self.frames = 0
 
@@ -126,6 +126,9 @@ class Agent (nn.Module):
             else:
                 a = self.nn(input.to(self.device)).cpu()
                 return torch.argmax(a).item()
+        else:
+            a = self.nn(input.to(self.device)).cpu()
+            return torch.argmax(a).item()
         
     def train (self):
         self.opt.zero_grad()        

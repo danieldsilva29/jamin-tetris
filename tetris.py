@@ -52,6 +52,7 @@ class Tetris:
         self.y = 60
         self.zoom = 20
         self.figure = Figure(3,0)
+        self.nextFigure = Figure(3,0)
     
         self.height = height
         self.width = width
@@ -65,7 +66,8 @@ class Tetris:
             self.field.append(new_line)
 
     def new_figure(self):
-        self.figure = Figure(3, 0)
+        self.figure = self.nextFigure
+        self.nextFigure = Figure(3,0)
 
     def intersects(self):
         intersection = False
@@ -151,13 +153,8 @@ if __name__ == "__main__":
 
     pressing_down = False
 
-
-
     while not done:
-        if game.figure != None:
-            print("figure: ", game.figure.image())
-            print("x: ", game.figure.x)
-            print("y: ", game.figure.y)
+        print("score: " ,game.score)
 
         if game.figure is None:
             game.new_figure()

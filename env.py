@@ -52,16 +52,23 @@ class TetrisEnv:
         for i in range(self.h):
             for j in range(self.w):
                 if ob[i][j] > 0:
-                    ob[i][j] = 1
+                    ob[i][j] = 0.5
 
         # create the FIGURE
         for i in range(4):
             for j in range(4):
                 p = i * 4 + j
                 if p in self.game.figure.image():
-                    ob[i + self.game.figure.y][j + self.game.figure.x] = 0.5
+                    ob[i + self.game.figure.y][j + self.game.figure.x] = 2
 
-        return np.array(ob).flatten()
+        nextFig = np.zeros((4,4))
+        for i in range(4):
+            for j in range(4):
+                if i * 4 + j in self.game.figure.image():
+                    nextFig[i][j] = 1
+
+        a = np.array(ob).flatten()
+        return np.concatenate((a, nextFig.flatten()), axis=0)
     
     def reset (self):
         self.game = Tetris(self.h, self.w)
@@ -69,18 +76,20 @@ class TetrisEnv:
 
 
     def step (self, action):
-
+        prevScore = self.game.score 
+        
         if action == 0: self.game.rotate(reverse=False)
         elif action == 1: self.game.rotate(reverse=True)
-        elif action == 2: self.game.go_down()
-        elif action == 3: self.game.go_side(-1)
-        elif action == 4: self.game.go_side(1)
-        elif action == 5: self.game.go_space()
+        elif action == 2: self.game.go_side(-1)
+        elif action == 3: self.game.go_side(1)
+        elif action == 4: self.game.go_space()
+        # there's an another action that just does nothing, action = 5
+        self.game.go_down()
 
-        reward = 1 # for every timestep include a small positive reward
+        reward = self.game.score - prevScore
         is_terminated = False
         if self.game.state == "gameover":
-            reward = -50 
+            reward = -25 
             is_terminated = True
 
         if self.game.figure is None:
