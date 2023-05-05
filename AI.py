@@ -48,19 +48,6 @@ class ReplayMem:
 # I am referencing this for now https://github.com/Eshaancoding/DQN/blob/master/Agent.cpp
 
 class Agent (nn.Module):
-    def __init__(self, h, w, modelPath):
-        super().__init__()
-
-        # Actual NN decl
-        self.nn = nn.Sequential(
-            nn.Linear(h*w, 128),
-            nn.Tanh(),
-            nn.Linear(128, 64),
-            nn.Tanh(),
-            nn.Linear(64, 6),  
-            nn.Softmax()
-        )
-        
 
     def __init__(self, h, w, memCap, lr, frameReachProb, targetFreqUpdate, batches, modelPath=None) -> None:
         super().__init__()
@@ -68,9 +55,13 @@ class Agent (nn.Module):
         # Actual NN decl
         self.nn = nn.Sequential(
             nn.Linear(h*w+16, 128),
-            nn.Tanh(),
+            nn.ReLU(),
+            nn.Linear(128, 128),
+            nn.ReLU(),
+            nn.Linear(128, 128),
+            nn.ReLU(),
             nn.Linear(128, 64),
-            nn.Tanh(),
+            nn.ReLU(),
             nn.Linear(64, 6),  
             nn.Softmax()
         )

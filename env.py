@@ -89,7 +89,7 @@ class TetrisEnv:
         reward = self.game.score - prevScore
         is_terminated = False
         if self.game.state == "gameover":
-            reward = -25 
+            reward = -5
             is_terminated = True
 
         if self.game.figure is None:
